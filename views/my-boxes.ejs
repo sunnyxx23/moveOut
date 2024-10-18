@@ -1,0 +1,19 @@
+<%- include("header"); %>
+<div class="my-boxes">
+    <h1 class="your-boxes-header">Your Boxes</h1> 
+    <div class="boxes-grid">
+        <% if (boxes.length > 0) { %>
+            <% boxes.forEach(box => { %>
+                <div class="box-item">
+                    <a href="/<%= box.id %>">
+                        <h2 class="box-title"><%= box.box_name %></h2>
+                        <p class="box-private">Private: <%= box.box_private === 1 ? 'Yes' : 'No' %></p>
+                    </a>
+                </div>                
+            <% }); %>
+        </div>
+        <% } else { %>
+            <p>No boxes found for you.</p>
+        <% } %>
+    </div>
+</div>

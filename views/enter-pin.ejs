@@ -1,0 +1,13 @@
+<%- include('header'); %>
+
+<placeholder class="enter-pin">
+<h1>Enter PIN for this box</h1>
+
+<form action="/<%= boxId %>/verify-pin" method="POST">
+    <label for="pin">Enter PIN:</label>
+    <input type="number" id="pin" name="pin" required>
+
+    <button type="submit">Submit</button>
+</form>
+
+</placeholder>

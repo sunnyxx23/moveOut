@@ -1,0 +1,132 @@
+<%- include("header"); %>
+
+<container name="create-box">
+    <title>Create New Box</title>
+    
+    <h1 class="text-light">Create a Label</h1>
+    
+    <form action="/box/upload" method="POST" enctype="multipart/form-data" class="bg-dark text-white p-4 rounded">
+        <input type="text" name="boxName" placeholder="Enter the box name here" required class="form-control mb-3" />
+        
+        <!-- Images Section -->
+        <div id="imageUploads">
+            <h3 class="text-light">Images</h3>
+            <div>
+                <input type="file" name="images" accept="image/*" class="form-control mb-3" />
+            </div>
+        </div>
+        <button type="button" onclick="addImageField()" class="btn btn-pink">Add Another Image</button>
+        <br><br>
+    
+        <!-- Text Notes Section -->
+        <div id="textNotes">
+            <h3 class="text-light">Text Notes</h3>
+            <div>
+                <input type="text" name="textFieldName" placeholder="Enter text field name" class="form-control mb-2" />
+                <textarea name="notes" placeholder="Enter your text note" class="form-control mb-3"></textarea>
+            </div>
+        </div>
+        <button type="button" onclick="addTextNoteField()" class="btn btn-pink">Add Another Text Note</button>
+        <br><br>
+    
+        <!-- Audio Section -->
+        <div id="audioUploads">
+            <h3 class="text-light">Audio</h3>
+            <div>
+                <input type="file" name="audios" accept="audio/*" class="form-control mb-3" />
+            </div>
+        </div>
+        <button type="button" onclick="addAudioField()" class="btn btn-pink">Add Another Audio</button>
+        <br><br>
+
+        <!-- Private Section -->
+        <div id="privateSection" class="text-light">
+            <h3>Private?</h3>
+            <label class="me-3">
+                <input type="radio" name="boxPrivate" value="yes" required onclick="togglePinField(true)"> Yes
+            </label>
+            <label>
+                <input type="radio" name="boxPrivate" value="no" required onclick="togglePinField(false)"> No
+            </label>
+        </div>
+
+        <!-- PIN Section -->
+        <div id="pinSection" style="display: none;" class="text-light">
+            <h3>Enter a 6-Digit PIN</h3>
+            <input type="text" name="boxPin" maxlength="6" pattern="\d{6}" placeholder="Enter 6-digit PIN" class="form-control mb-3" />
+        </div>
+        <br><br>
+
+        <!-- Labels Section -->
+        <h3 class="text-light">Select a Label</h3>
+        <div id="labelSelection" class="mb-3 position-relative"> 
+            <div class="slideshow-container">
+                <% labels.forEach((label, index) => { %>
+                    <div class="mySlides" style="display: <% if (index === 0) { %> block <% } else { %> none <% } %>;">
+                        <label class="me-3">
+                            <input type="radio" name="label" value="<%= label %>" <%= index === 0 ? 'checked' : '' %> />
+                            <img src="/labels/<%= label %>" alt="Label" width="200" height="100" class="border border-light" />
+                        </label>
+                    </div>
+                <% }) %>
+            </div>
+            <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+            <a class="next" onclick="changeSlide(1)">&#10095;</a>
+        </div>
+        <br><br>
+
+        <button type="submit" class="btn btn-pink">Submit</button>
+    </form>
+</container>
+
+<script>
+    function addImageField() {
+        const imageUploads = document.getElementById('imageUploads');
+        const div = document.createElement('div');
+        div.innerHTML = '<input type="file" name="images" accept="image/*" class="form-control mb-3">';
+        imageUploads.appendChild(div);
+    }
+
+    function addTextNoteField() {
+        const textNotes = document.getElementById('textNotes');
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <input type="text" name="textFieldName" placeholder="Enter text field name" class="form-control mb-2" />
+            <textarea name="notes" placeholder="Enter your text note" class="form-control mb-3"></textarea>
+        `;
+        textNotes.appendChild(div);
+    }
+
+    function addAudioField() {
+        const audioUploads = document.getElementById('audioUploads');
+        const div = document.createElement('div');
+        div.innerHTML = '<input type="file" name="audios" accept="audio/*" class="form-control mb-3">';
+        audioUploads.appendChild(div);
+    }
+
+    function togglePinField(isPrivate) {
+        const pinSection = document.getElementById('pinSection');
+        pinSection.style.display = isPrivate ? 'block' : 'none';
+    }
+
+    let slideIndex = 0;
+    showSlide(slideIndex);
+
+    function changeSlide(n) {
+        showSlide(slideIndex += n);
+    }
+
+    function showSlide(n) {
+        const slides = document.getElementsByClassName("mySlides");
+        if (n >= slides.length) {
+            slideIndex = 0; // Loop back to the first slide
+        }
+        if (n < 0) {
+            slideIndex = slides.length - 1; // Loop back to the last slide
+        }
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none"; // Hide all slides
+        }
+        slides[slideIndex].style.display = "block"; // Show the current slide
+    }
+</script>

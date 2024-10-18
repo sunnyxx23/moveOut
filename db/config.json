@@ -1,0 +1,8 @@
+{
+    "host":         "DESKTOP-A9K0AFD.local",
+    "user":         "dbadm",
+    "password":     "P@ssw0rd",
+    "port":         3306,
+    "database":     "moveout",
+    "multipleStatements": true
+}

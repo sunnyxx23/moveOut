@@ -1,0 +1,36 @@
+<%- include("header"); %>
+
+<container name="choose-label">
+    <title>Select Labels for Your Box</title>
+
+    <h1>Choose Labels for Your Box</h1>
+
+    <form id="labelForm" action="/box/submit-labels" method="POST">
+        <input type="hidden" name="boxId" value="<%= boxId %>">
+        <div id="labelOptions">
+            <% labels.forEach(function(label) { %>
+                <div class="label-option">
+                    <input type="checkbox" name="labels" value="<%= label %>">
+                    <img src="/labels/<%= label %>" alt="<%= label %>" width="100">
+                </div>
+            <% }) %>
+        </div>
+        <br><br>
+        <button type="submit" disabled>Select Labels</button>
+    </form>
+
+<script>
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const submitButton = document.querySelector('button[type="submit"]');
+        
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            if (Array.from(checkboxes).some(cb => cb.checked)) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        });
+    });
+</script>
+</container>

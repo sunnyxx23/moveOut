@@ -1,0 +1,148 @@
+<%- include('header'); %>
+<container name="box-details">
+    <title>Box Details</title>
+
+    <!-- Button Container -->
+    <div class="button-container">
+        <!-- Toggle Button -->
+        <button id="toggleView" class="submit half-width">Show Contents</button>
+        
+        <% if (showShareButton) { %>  <!-- Only show if user is logged in -->
+            <!-- Share Label Button -->
+            <button id="shareLabel" class="submit half-width">Share Label</button>
+        <% } %>
+    </div>
+
+    <!-- View 1: QR Code, Label, Print Button -->
+    <div id="view1" class="view">
+        <button onclick="window.print()" class="submit">Print this label</button>
+        <p><strong>Owner:</strong> <%= box.box_owner %></p>
+
+        <div class="printable">
+            <h1 style="max-width: 800px; color: hotpink;">Box: <%= box.box_name %></h1>
+
+            <!-- QR Code Section -->
+            <div class="qr-code-section">
+                <a href="/<%= box.id %>" target="_blank">
+                    <img src="<%= qrCode %>" alt="QR Code for <%= box.box_name %>" width="200" />
+                </a>
+            </div>
+            
+            <!-- Label Section -->
+            <% if (box.label) { %>
+                <div class="label-section">
+                    <img src="<%= box.label %>" alt="Label for <%= box.box_name %>" width="200" />
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- View 2: Content Preview (Images, Audio, Text Notes) -->
+    <div id="view2" class="view" style="display: none;">
+        <% if (images && images.length > 0) { %>
+            <div class="images-section">
+                <h3 style="color: hotpink;">Images</h3>
+                <% images.forEach(function(image) { %>
+                    <div class="image-item">
+                        <img src="<%= image %>" alt="Box Image" width="200" />
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <% if (audios && audios.length > 0) { %>
+            <div class="audio-section">
+                <h3 style="color: hotpink;">Audio Files</h3>
+                <% audios.forEach(function(audio) { %>
+                    <div class="audio-item">
+                        <audio controls>
+                            <% if (audio.endsWith('.mp3')) { %>
+                                <source src="<%= audio %>" type="audio/mpeg">
+                            <% } else if (audio.endsWith('.wav')) { %>
+                                <source src="<%= audio %>" type="audio/wav">
+                            <% } else if (audio.endsWith('.m4a')) { %>
+                                <source src="<%= audio %>" type="audio/mp4">
+                            <% } %>
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                <% }) %>            
+            </div>
+        <% } %>
+
+        <% if (notes && notes.length > 0) { %>
+            <div class="notes-section">
+                <h3 style="color: hotpink;">Text Notes</h3>
+                <% notes.forEach(function(note, index) { %>
+                    <div class="note-item">
+                        <h4 style="color: hotpink;"><%= note.name %></h4>
+                        <textarea class="input" readonly><%= note.content %></textarea>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Input Field for Sharing Label (Initially Hidden) -->
+    <div id="shareInputContainer" style="display: none;">
+        <input id="emailInput" type="email" placeholder="Enter email" class="input half-width">
+        <button id="submitEmail" class="submit half-width">Send Label</button>
+    </div>
+</container>
+
+<script>
+    const toggleViewButton = document.getElementById('toggleView');
+    const shareLabelButton = document.getElementById('shareLabel');
+    const view1 = document.getElementById('view1');
+    const view2 = document.getElementById('view2');
+    const shareInputContainer = document.getElementById('shareInputContainer');
+    const emailInput = document.getElementById('emailInput');
+    const submitEmailButton = document.getElementById('submitEmail');
+
+    // Toggle between views
+    toggleViewButton.addEventListener('click', () => {
+        if (view1.style.display === 'none') {
+            view1.style.display = 'block';
+            view2.style.display = 'none';
+            toggleViewButton.textContent = 'Show Contents';
+        } else {
+            view1.style.display = 'none';
+            view2.style.display = 'block';
+            toggleViewButton.textContent = 'Show QR Code and Label';
+        }
+    });
+
+    // Show email input for sharing
+    shareLabelButton.addEventListener('click', () => {
+        const labelUrl = "<%= box.label %>";
+        if (labelUrl) {
+            shareInputContainer.style.display = 'block';
+        } else {
+            alert('No label to share.');
+        }
+    });
+
+    // Send the GET request to the server to share the label
+    submitEmailButton.addEventListener('click', () => {
+        const email = emailInput.value;
+        if (email) {
+            // Send the GET request to the /:id/share route
+            fetch(`/<%= box.id %>/share?email=${encodeURIComponent(email)}`, {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Label URL sent successfully!');
+                } else {
+                    alert('Failed to send the label. Try again.');
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while sending the label.');
+                console.error(error);
+            });
+        } else {
+            alert('Please enter a valid email.');
+        }
+    });
+</script>

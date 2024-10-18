@@ -1,0 +1,40 @@
+USE moveout;
+
+DROP TABLE IF EXISTS boxes;
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    pass VARCHAR(255) NOT NULL,
+    verified BOOLEAN DEFAULT 0 NOT NULL,
+    lastLoggedIn TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isDisabled BOOLEAN DEFAULT 0,
+    isAdmin BOOLEAN DEFAULT 0
+);
+
+CREATE TABLE boxes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    box_owner VARCHAR(255),
+    box_name VARCHAR(255),
+    box_path VARCHAR(255),
+    box_private BOOLEAN,
+    label VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    box_pin INT,
+    FOREIGN KEY (box_owner) REFERENCES user(email)
+);
+
+DELIMITER //
+
+CREATE EVENT IF NOT EXISTS delete_old_accounts
+ON SCHEDULE EVERY 1 DAY
+DO
+BEGIN
+    DELETE FROM boxes WHERE box_owner IN (SELECT email FROM user WHERE lastLoggedIn < (NOW() - INTERVAL 1 MONTH));
+    DELETE FROM user WHERE lastLoggedIn < (NOW() - INTERVAL 1 MONTH);
+END;
+
+//
+
+DELIMITER ;

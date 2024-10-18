@@ -1,0 +1,48 @@
+<%- include("header"); %>
+
+<title>All Users</title>
+
+<container class="all-users">
+    <h1 class="title-au">All Users</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Last Logged In</th>
+                <th># of boxes</th>
+                <th>Verified</th>
+                <th>Is Admin</th>
+                <th>Is Disabled</th>
+                <th>Disable</th>
+                <th>Send marketing</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (const user of users) { %>
+                <tr>
+                    <td><%= user.email %></td>
+                    <td><%= user.LastLoggedIn %></td>
+                    <td><%= user.totalBoxes %></td>
+                    <td><%= user.verified %></td>
+                    <td><%= user.isAdmin %></td>
+                    <td><%= user.isDisabled %></td>
+                    <td>
+                        <% if (user.isAdmin === 0) { %> <!-- Only show disable/enable button for non-admins -->
+                            <% if (user.isDisabled) { %>
+                                <a class="table-button" href="/enable/<%= user.email %>">Enable</a>
+                            <% } else { %>
+                                <a class="table-button" href="/disable/<%= user.email %>">Disable</a>
+                            <% } %>
+                        <% } else { %> <!-- If the user is an admin, show the "can't change admins" message -->
+                            <span class="small-text">Admin</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <a class="marketing" href="/marketing/<%= user.email %>">Send marketing mail</a>
+                    </td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</container>

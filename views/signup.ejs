@@ -1,0 +1,69 @@
+<%- include("header"); %>
+<!-- register -->
+<div class="form">
+    <div class="title">Sign Up</div>
+    <div class="subtitle">Let's create your account!</div>
+
+    <form id="signupForm" action="/signup" method="POST">
+        <div class="input-container ic1">
+            <input id="email" class="input" type="text" name="email" placeholder=" " required />
+            <small id="emailError" style="color: red;">
+                <%= typeof emailError !== 'undefined' ? emailError : '' %>
+            </small>
+            <div class="cut cut-short"></div>
+            <label for="email" class="placeholder">Email</label>
+        </div>
+
+        <div class="input-container ic2">
+            <input id="password" class="input" type="password" name="password" placeholder=" " required />
+            <div class="cut"></div>
+            <label for="password" class="placeholder">Password</label>
+            <small id="passwordError" style="color: red;">
+                <%= typeof passwordError !== 'undefined' ? passwordError : '' %>
+            </small>
+        </div>
+
+        <button type="submit" class="submit" id="submitBtn">Sign Up</button>
+    </form>
+</div>
+
+<script>
+    emailError.textContent = ''
+    passwordError.textContent = ''
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    function validateForm() {
+        let valid = true;
+
+        // Validate email
+        if (!emailRegex.test(emailInput.value)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            valid = false;
+        };
+
+        // Validate password
+        if (!passwordRegex.test(passwordInput.value)) {
+            passwordError.textContent = 'Password must be at least 8 characters long, contain upper and lowercase letters.';
+            valid = false;
+        };
+
+        // Enable or disable the submit button based on validation
+        submitBtn.disabled = !valid;
+    }
+
+    // Add event listeners for input changes
+    emailInput.addEventListener('input', validateForm);
+    passwordInput.addEventListener('input', validateForm);
+
+    // Initial validation
+    validateForm();
+</script>

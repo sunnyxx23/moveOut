@@ -1,0 +1,567 @@
+:root {
+  --bgcolor: rgb(2, 0, 36);
+  --text-color: hotpink 
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+a {
+	color: hotpink;
+}
+
+body {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100vh;
+  padding: 0 20px;
+	background: var(--bgcolor);
+	color: white;
+}
+
+nav {
+  flex: 1;
+}
+
+ul {
+	list-style: none;
+  padding: 0;
+}
+
+.nav-link {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  text-transform: uppercase;
+  transition: all 300ms ease;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: white;
+  transform: skew(10deg);
+}
+
+.nav-link::before {
+  color: white;
+  content: attr(data-name);
+  position: absolute;
+  top: 0;
+  left: -20px;
+  background: var(--bgcolor);
+  height: 3rem;
+  overflow: hidden;
+  transition: all 300ms ease;
+  padding-left: 20px;
+}
+
+.nav-link:hover::before {
+  top: -3px;
+  left: 0px;
+  color: hotpink;
+  border-color: hotpink;
+}
+
+.nav-link::after {
+  content: "";
+  height: 4px;
+  width: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: hotpink;
+  transition: all 300ms ease;
+}
+
+.nav-link:hover::after {
+  width: 120%;
+  border-color: hotpink;
+  color: hotpink;
+  outline: 5px solid rgb(2, 0, 36);
+}
+
+
+.user-email {
+  position: absolute;
+  top: 20px; /* Position it at the top */
+  left: 20px; /* Align it to the left */
+  font-size: 1.5rem;
+  color: hotpink;
+}
+
+.alert-success {
+  background-color: rgba(0, 128, 0, 0.1); /* Light green background */
+  border: 2px solid green; /* Green border */
+  color: green; /* Green text */
+  padding: 10px; /* Padding around the text */
+  border-radius: 10px; /* Rounded corners */
+  margin-top: 20px;
+  margin-bottom: 20px; /* Spacing below the box */
+  font-weight: bold; /* Bold text */
+  text-align: center; /* Center the text */
+}
+
+.errormsg {
+  background-color: rgba(0, 128, 0, 0.1); /* Light green background */
+  border: 2px solid red; /* Green border */
+  color: red; /* Green text */
+  padding: 10px; /* Padding around the text */
+  border-radius: 10px; /* Rounded corners */
+  margin-top: 20px;
+  margin-bottom: 20px; /* Spacing below the box */
+  font-weight: bold; /* Bold text */
+  text-align: center; /* Center the text */
+}
+
+.form {
+  flex: 1;
+  max-width: 400px;
+  background-color: #15172b;
+  border-radius: 20px;
+  box-sizing: border-box;
+  height: 500px;
+  padding: 20px;
+  width: 320px;
+}
+
+.title {
+  color: #eee;
+  font-family: sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  margin-top: 30px;
+}
+
+.subtitle {
+  color: #eee;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.input-container {
+  height: 50px;
+  position: relative;
+  width: 100%;
+}
+
+.ic1 {
+  margin-top: 40px;
+}
+
+.ic2 {
+  margin-top: 30px;
+}
+
+.input {
+  background-color: #303245;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: #eee;
+  font-size: 18px;
+  height: 100%;
+  outline: 0;
+  padding: 4px 20px 0;
+  width: 100%;
+}
+
+.cut {
+  background-color: #15172b;
+  border-radius: 10px;
+  height: 20px;
+  left: 20px;
+  position: absolute;
+  top: -20px;
+  transform: translateY(0);
+  transition: transform 200ms;
+  width: 76px;
+}
+
+.cut-short {
+  width: 50px;
+}
+
+.input:focus ~ .cut,
+.input:not(:placeholder-shown) ~ .cut {
+  transform: translateY(8px);
+}
+
+.placeholder {
+  color: #65657b;
+  font-family: sans-serif;
+  left: 20px;
+  line-height: 14px;
+  pointer-events: none;
+  position: absolute;
+  transform-origin: 0 50%;
+  transition: transform 200ms, color 200ms;
+  top: 20px;
+}
+
+.input:focus ~ .placeholder,
+.input:not(:placeholder-shown) ~ .placeholder {
+  transform: translateY(-30px) translateX(10px) scale(0.75);
+}
+
+.input:not(:placeholder-shown) ~ .placeholder {
+  color: #808097;
+}
+
+.input:focus ~ .placeholder {
+  color: #dc2f55;
+}
+
+.checkbox-container {
+  margin-top: 15px;
+}
+
+.submit {
+  background-color: #303245; /* Dark background matching inputs */
+  border: 2px solid hotpink; /* Hot pink border */
+  border-radius: 12px;
+  color: white; /* White text */
+  font-size: 18px;
+  height: 50px;
+  margin-top: 38px;
+  outline: 0;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 300ms ease, transform 300ms ease;
+}
+
+.submit:hover {
+  background-color: hotpink; /* Hot pink background on hover */
+  color: #303245; /* Dark text on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.submit:active {
+  background-color: #dc2f55; /* Slightly darker pink when clicked */
+  color: white;
+}
+
+
+.about-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+  font-size: 1.2rem;
+}
+
+.my-boxes {
+  max-width: 1200px;
+  max-height: 70vh;
+}
+
+.your-boxes-header {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  color: hotpink;
+}
+
+.boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: auto;
+  grid-column-gap: 20px;
+  grid-row-gap: 10px;
+}
+
+.box-item {
+  max-width: 150px;
+  background-color: var(--bgcolor);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  border: 2px solid hotpink;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.box-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.box-private {
+  overflow: hidden;
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+}
+
+
+.box-item:hover {
+  transform: scale(1.05);
+}
+
+
+.box-item a {
+  text-decoration: none;
+}
+
+.box-item h2 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 0;
+  color: hotpink;
+}
+
+.your-boxes-header {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--text-color);
+}
+
+/* Horizontal layout for content inside each box */
+.box-content {
+  margin-top: 15px;
+}
+
+/* Images Section */
+.box-images img {
+  width: 200px;
+  height: auto;
+  margin-right: 10px;
+}
+
+/* Audio Section */
+.box-audio audio {
+  width: 200px;
+  margin-right: 10px;
+}
+
+/* Notes Section */
+.box-notes textarea {
+  width: 200px;
+  height: 150px;
+  resize: none;
+  margin-right: 10px;
+}
+
+.view {
+  padding: 20px;
+  border: 2px solid hotpink;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.view button {
+  position: relative;
+  margin: auto;
+}
+
+.view p {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.images-section, .audio-section, .notes-section {
+  margin: 20px 0;
+  width: 1000px;
+}
+
+.note-item h4 {
+  color: hotpink;
+  margin-bottom: 10px;
+}
+
+textarea {
+  background-color: #303245; /* Dark background matching inputs */
+  color: #eee; /* White text */
+  border: none; /* No border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px; /* Padding for the text area */
+  width: 100%; /* Full width */
+  height: 30px; /* Fixed height */
+  resize: none; /* Disable resizing */
+}
+
+img {
+  border-radius: 10px; /* Rounded corners for images */
+}
+
+.slideshow-container {
+  position: relative;
+  max-width: 100%;
+  margin: auto;
+}
+
+.mySlides {
+  display: none; /* Hide all slides by default */
+}
+
+.prev, .next {
+  cursor: pointer;
+  position: relative;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.all-users {
+  text-align: center; /* Center the heading */
+  font-size: 1.2rem; /* Set a suitable size for the heading */
+  margin-top: 20px; /* Add some space at the top */
+  color: hotpink; /* Make sure the text color aligns with your theme */
+}
+
+table {
+  margin-top: 20px; /* Space between the heading and the table */
+  width: 100%; /* Make the table full width */
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: black; /* Set background for header */
+  color: white;
+}
+
+tbody {
+  color: white; /* Ensure table body text is white */
+}
+
+/* Styling for the table buttons */
+.table-button {
+
+  background-color: #303245; /* Dark background */
+  border: 2px solid hotpink; /* Hot pink border */
+  color: white; /* White text */
+  font-size: 16px;
+  padding: 8px 16px; /* Padding for better click area */
+  border-radius: 10px; /* Rounded corners */
+  cursor: pointer;
+  margin: 5px;
+  margin-top: 5px;
+  transition: background-color 300ms ease, transform 300ms ease;
+}
+
+.table-button:hover {
+  background-color: hotpink; /* Hot pink background on hover */
+  color: #303245; /* Dark text on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.table-button:active {
+  background-color: #dc2f55; /* Darker pink when clicked */
+  color: white;
+}
+
+.user-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
+}
+
+.user-box-stuff {
+  border: 2px solid #ff4d4d;
+  padding: 20px;
+  background-color: #1e1e1e;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.user-box-stuff-link {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #ff4d4d;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.user-box-stuff-link:hover {
+  background-color: #ff1a1a;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.half-width {
+  width: 48%;
+}
+
+@media print {
+  /* Hide everything except the print content */
+  body * {
+      visibility: hidden;
+  }
+
+  /* Ensure the printable content is visible */
+  .printable, .printable * {
+      visibility: visible;
+      position: static; /* Change from absolute to static */
+  }
+
+  /* Make sure elements are displayed vertically in proper order */
+  .printable {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center horizontally */
+      justify-content: center;
+      margin-right: auto;
+  }
+
+  /* Style adjustments for A4 printing */
+  .printable h1 {
+      margin-bottom: 30px; /* Add margin for spacing */
+      font-size: 60pt; /* Increase font size for better visibility */
+  }
+
+  .qr-code-section img, .label-section img {
+      width: 600px; /* Set a fixed size for images */
+      margin-bottom: 30px; /* Add margin below QR code and label */
+  }
+
+  .qr-code-section {
+      margin-bottom: 30px; /* Add space below QR code section */
+  }
+
+  .label-section {
+      margin-bottom: 30px; /* Add space below label section */
+  }
+}

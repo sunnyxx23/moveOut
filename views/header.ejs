@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/moveOutBox.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <% if (user || admin) { %>
+    <div class="user-email">
+      <a class="nav-link" data-name="<%= user.email %>" href="/user/<%= user.email %>"><%= user.email %></a>
+    </div>
+  <% } %>
+
+
+<nav>
+  <ul id="nav">
+    <li class="nav-item">
+      <a class="nav-link" data-name="Home" href="/">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-name="About" href="/about">About</a>
+    </li>
+
+    <% if (admin) { %>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="All.Users" href="/admin/users">All.Users</a>
+      </li>
+    <% } %>
+
+    <% if (user) { %>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="Create.box" href="/box">Create.box</a>
+      </li>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="My.boxes" href="/<%= user.email %>/boxes">My.boxes</a>
+      </li>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="Logout" href="/logout">Logout</a>
+      </li>
+    <% } else { %>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="Login" href="/login">Login</a>
+      </li>
+      <li class="nav-item-right">
+        <a class="nav-link" data-name="Register" href="/signup">Register</a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+</header>
+</body>
+</html>
