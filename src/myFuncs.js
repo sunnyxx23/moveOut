@@ -1,14 +1,13 @@
 "use strict";
-const mysql         = require("promise-mysql");
+const mysql         = require('promise-mysql');
+const cron          = require('node-cron')
 const fs            = require('fs');
-const bcrypt        = require("bcrypt");
-const validator     = require("validator");
+const bcrypt        = require('bcrypt');
+const validator     = require('validator');
 const jwt           = require('jsonwebtoken');
 const path          = require('path');
 const nodemailer    = require('nodemailer');
-const config        = require("../db/config.json");
-const qrcode        = require('qrcode');
-const SendmailTransport = require("nodemailer/lib/sendmail-transport");
+const config        = require('../db/config.json');
 
 
 let db;
@@ -29,6 +28,23 @@ const generateToken = (email) => {
     const token = jwt.sign({ email }, secret, { expiresIn });
     return token;
 };
+
+// Function to recursively delete directory contents
+function clearDirectory(dirPath) {
+    if (fs.existsSync(dirPath)) {
+        fs.readdirSync(dirPath).forEach((file) => {
+            const currentPath = path.join(dirPath, file);
+            if (fs.lstatSync(currentPath).isDirectory()) {
+                // Recursively delete contents of subdirectory
+                clearDirectory(currentPath);
+                fs.rmdirSync(currentPath); // Remove the empty directory
+            } else {
+                fs.unlinkSync(currentPath); // Delete file
+            }
+        });
+    }
+};
+
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -167,28 +183,37 @@ async function login(req, res, email, password) {
 
 // Signup
 async function signup(req, res, email, password) {
+    console.log(email, password);
     try {
-        const sql = `CALL signup(?,?);`;
+        const sqlSignup = `CALL signup(?, ?, ?);`;
         const {valid, emailErrors, passwordErrors}  = await validateInput(email, password);
-        if (valid === false) {
+        
+        if (!valid) {
             return {
                 success: valid, 
                 emailErrors: emailErrors.join(', '),
                 passwordErrors: passwordErrors.join(', ')
             };
-        } else {
-            const hashpass = await bcrypt.hash(password, 10);
-            const token = generateToken(email);
-            
-            sendVerificationEmail(email, token);
-            
-            await db.query(sql, [email, hashpass]); 
-
-            // res.json({ message: `Verify your email at ${email}`, redirectUrl: '/' });    
-            return { success: valid };
         };
+        
+        const hashpass = await bcrypt.hash(password, 10);
+        const isGmail = email.endsWith('@gmail.com');
+        const token = generateToken(email);
+
+        if (isGmail) {
+            let verified = 1
+            await db.query(sqlSignup, [email, hashpass, verified]);
+            res.cookie('jwt', token, {httpOnly: true });
+            return { success: true, message: 'Account created successfully!' };
+        } else {
+            sendVerificationEmail(email, token);
+            const verified = 0;
+            await db.query(sqlSignup, [email, hashpass, verified]);
+            return { success: true, message: 'Verify your email to login!' };
+        }
     } catch (err) {
-        res.status(500).json({ errorMessage: `An error occurred during signup.`, redirectUrl: '/'});
+        console.error('Error during signup:', err);
+        return { success: false, message: 'An error occurred during signup.' };
     }
 };
 
@@ -316,22 +341,6 @@ async function deleteUser(req, res, email) {
     }
 };
 
-// Function to recursively delete directory contents
-function clearDirectory(dirPath) {
-    if (fs.existsSync(dirPath)) {
-        fs.readdirSync(dirPath).forEach((file) => {
-            const currentPath = path.join(dirPath, file);
-            if (fs.lstatSync(currentPath).isDirectory()) {
-                // Recursively delete contents of subdirectory
-                clearDirectory(currentPath);
-                fs.rmdirSync(currentPath); // Remove the empty directory
-            } else {
-                fs.unlinkSync(currentPath); // Delete file
-            }
-        });
-    }
-};
-
 async function shareBox(boxId, recipientEmail, req, res) {
     console.log('Recipent:', recipientEmail)
     
@@ -383,6 +392,60 @@ async function shareBox(boxId, recipientEmail, req, res) {
         res.status(500).send('An error occurred while sharing the label.');
     }
 }
+
+cron.schedule('0 0 * * *', async () => {
+    try {
+        // Fetch users who have not logged in for 27 days
+        const users = await db.query(`SELECT email, last_logged_in FROM users WHERE DATEDIFF(NOW(), last_logged_in) = 27`);
+
+        users.forEach((user) => {
+            const { email } = user;
+            
+            // Prepare the reminder email
+            const mailOptions = {
+                from: 'moveoutnoreply@gmail.com',
+                to: email,
+                subject: 'Your account will be deleted in 3 days!',
+                text: `Dear user, your account is going to be deleted in 3 days due to inactivity. Please log in to keep all your boxes and labels safe.`,
+                html: `<p>Dear user,</p><p>Your account is going to be deleted in 3 days due to inactivity. Please <a href="http://localhost:3000/login">log in</a> to keep all your boxes and labels safe.</p>`
+            };
+
+            // Send the email
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log('Error sending reminder email:', error);
+                } else {
+                    console.log(`Reminder email sent to ${email}: ${info.response}`);
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error checking last_logged_in status:', error);
+    }
+});
+
+// Scheduled job to delete accounts after 30 days of inactivity
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const users = await db.query(`SELECT email FROM user WHERE DATEDIFF(NOW(), last_logged_in) >= 30`);
+
+        users.forEach(async (user) => {
+            const { email } = user;
+            
+            await db.query('DELETE FROM boxes WHERE box_owner = ?', [email]);
+
+            await db.query('DELETE FROM user WHERE email = ?', [email]);
+
+            const userDirectory = path.join(__dirname, '../uploads', email); 
+            clearDirectory(userDirectory); 
+
+            console.log(`Account and all data for ${email} have been deleted.`);
+        });
+    } catch (error) {
+        console.error('Error deleting inactive accounts:', error);
+    }
+});
+
 
 
 module.exports = {

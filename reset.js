@@ -17,6 +17,7 @@ let db;
 
         // Close the database connection after the users are inserted
         await db.end();
+        console.log('All done!');
         console.log('Database connection closed.');
         
     } catch (err) {
@@ -55,7 +56,7 @@ async function insertUsers() {
         { email: 'user2@email.com', password: 'Test123!', verified: 1, isAdmin: 0, isDisabled: 0 },
         { email: 'user3@email.com', password: 'Test123!', verified: 1, isAdmin: 0, isDisabled: 1 },
         { email: 'user4@email.com', password: 'Test123!', verified: 0, isAdmin: 0, isDisabled: 0 },
-        { email: 'user5@email.com', password: 'Test123!', verified: 0, isAdmin: 0, isDisabled: 0 },
+        { email: 'user5@email.com', password: 'Test123!', verified: 0, isAdmin: 0, isDisabled: 0 }
     ];
 
     for (const user of users) {

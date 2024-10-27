@@ -128,21 +128,22 @@ router.get('/signup', async (req, res) => {
 router.post('/signup', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const results = await myFuncs.signup(req, res, email, password);
+        const { success, message, emailErrors, passwordErrors } = await myFuncs.signup(req, res, email, password);
 
-        if (results.success) {
-            return res.redirect(`/login?confirmed=Verify%20your%20email%20to%20login!`);
+        if (success) {
+            return res.redirect(`/login?confirmed=${message}`);
         } else {
             return res.render('signup', {
-                emailError: results.emailErrors,
-                passwordError: results.passwordErrors
+                emailError: emailErrors,
+                passwordError: passwordErrors
             });
         }
     } catch (err) {
-        console.log('signup error', err);
+        console.error('signup error', err);
         return res.status(500).send('Error during registration.');
     }
 });
+
 
 router.get('/box', async (req, res) => {
     const labelsDir = path.join(__dirname, '../labels');
@@ -362,7 +363,7 @@ router.get('/marketing/:user', async (req, res) => {
     try {
         myFuncs.sendMarketingEmail(email);  // Send marketing email
         console.log(`Marketing email sent to ${email}`);
-        res.send('Marketing email sent successfully');  // Send response to client
+        res.redirect('/');
     } catch (error) {
         console.log('Error in /marketing/:user route:', error);
         res.redirect('/');

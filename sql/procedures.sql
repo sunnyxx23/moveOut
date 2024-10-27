@@ -8,10 +8,11 @@ DROP PROCEDURE IF EXISTS findByEmail;;
 
 CREATE PROCEDURE signup(
     IN email VARCHAR(255),
-    IN hash_pass VARCHAR(255)
+    IN hash_pass VARCHAR(255),
+    IN verified INT
 )
 BEGIN
-    INSERT INTO user (email, pass) VALUES (email, hash_pass);
+    INSERT INTO user (email, pass, verified) VALUES (email, hash_pass, verified);
 END
 ;;
 
